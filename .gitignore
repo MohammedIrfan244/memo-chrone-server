@@ -1,0 +1,17 @@
+# Node.js
+node_modules/
+
+# TypeScript
+dist/
+*.log
+*.tsbuildinfo
+
+# Environment files
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
