@@ -41,7 +41,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   }
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
   if (!isPasswordCorrect) {
-    return next(new CustomError(400, "Incorrect password"));
+    return next(new CustomError(400, "Invalid credentials"));
   }
   const token = getAccessToken(
     user._id.toString(),
