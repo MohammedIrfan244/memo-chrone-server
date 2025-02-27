@@ -7,6 +7,7 @@ const mongoConfig = async () => {
         logInfo("Connected to MongoDB");
     }catch(err){
         logError("Failed to connect to MongoDB");
+        console.log(err)
     }
 };
 
