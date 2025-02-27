@@ -57,4 +57,4 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
     .json({ status: "success", message: "User logged in successfully", token });
 };
 
-export { registerUser , loginUser};
+export { registerUser, loginUser };
