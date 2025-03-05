@@ -34,10 +34,10 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   if (!identity || !password) {
     return next(new CustomError(400, "Please provide all credentials"));
   }
-  const userByemail = await User.findOne({ email: identity });
+  const userByemail = await User.findOne({ email: identity },{username : 1, email : 1});
   let user = userByemail;
   if (!userByemail) {
-    const userByUsername = await User.findOne({ username: identity });
+    const userByUsername = await User.findOne({ username: identity }, { username : 1 , email : 1});
     user = userByUsername;
   }
   if (!user) {
