@@ -87,4 +87,4 @@ const refreshingToken = async (req: Request, res: Response, next: NextFunction) 
   res.status(200).json({status: "success", message: "Token refreshed successfully", accessToken})
 };
 
-export { registerUser, loginUser , logoutUser};
+export { registerUser, loginUser , logoutUser , refreshingToken};
