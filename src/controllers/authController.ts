@@ -3,6 +3,10 @@ import { Request, Response, NextFunction } from "express";
 import CustomError from "../lib/utils/CustomError";
 import { getAccessToken, getRefreshToken } from "../lib/utils/jwt";
 import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken'
+
+
+
 
 const registerUser = async (
   req: Request,
@@ -54,7 +58,33 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   res.cookie("refreshToken", refreshToken, { httpOnly: true });
   res
     .status(200)
-    .json({ status: "success", message: "User logged in successfully", token });
+    .json({ status: "success", message: "User logged in successfully", accessToken : token });
 };
 
-export { registerUser, loginUser };
+const logoutUser = async (req: Request , res: Response, next: NextFunction) => {
+  res.clearCookie("refreshToken");
+  res.status(200).json({ status: "success", message: "User logged out successfully" });
+};
+
+const refreshingToken = async (req: Request, res: Response, next: NextFunction) => {
+  if(!req.cookies){
+    return next(new CustomError(401, "Unauthorized"));
+  }
+  if(!req.cookies.refreshToken){
+    return next(new CustomError(401, "No refresh token found"));
+  }
+  const refreshToken = req.cookies.refreshToken
+  const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET as string);
+  if(!decoded){
+    return next(new CustomError(401, "Invalid refresh token"));
+  }
+  const user = await User.findById(decoded)
+  if(!user){
+    return next( new CustomError(404, "User not found"))
+  }
+
+  const accessToken = getAccessToken(user._id.toString(),process.env.JWT_SECRET as string)
+  res.status(200).json({status: "success", message: "Token refreshed successfully", accessToken})
+};
+
+export { registerUser, loginUser , logoutUser};
