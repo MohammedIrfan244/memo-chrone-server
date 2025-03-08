@@ -2,7 +2,7 @@ import User from "../models/userModel";
 import { Request, Response, NextFunction } from "express";
 import CustomError from "../lib/utils/CustomError";
 import { getAccessToken, getRefreshToken } from "../lib/utils/jwt";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken'
 
 
@@ -34,32 +34,37 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   if (!identity || !password) {
     return next(new CustomError(400, "Please provide all credentials"));
   }
-  const userByemail = await User.findOne({ email: identity },{username : 1, email : 1});
+
+  const userByemail = await User.findOne(
+    { email: identity },
+    { username: 1, email: 1, password: 1 }
+  );
   let user = userByemail;
+
   if (!userByemail) {
-    const userByUsername = await User.findOne({ username: identity }, { username : 1 , email : 1});
+    const userByUsername = await User.findOne(
+      { username: identity },
+      { username: 1, email: 1, password: 1 }
+    );
     user = userByUsername;
   }
+
   if (!user) {
-    return next(new CustomError(400, "User not found"));
+    return next(new CustomError(404, "User not found"));
   }
+
   const isPasswordCorrect = await bcrypt.compare(password, user.password);
   if (!isPasswordCorrect) {
     return next(new CustomError(400, "Invalid credentials"));
   }
-  const token = getAccessToken(
-    user._id.toString(),
-    process.env.JWT_SECRET as string
-  );
-  const refreshToken = getRefreshToken(
-    user._id.toString(),
-    process.env.JWT_SECRET as string
-  );
+
+  const token = getAccessToken(user._id.toString(), process.env.JWT_SECRET as string);
+  const refreshToken = getRefreshToken(user._id.toString(), process.env.JWT_SECRET as string);
+
   res.cookie("refreshToken", refreshToken, { httpOnly: true });
-  res
-    .status(200)
-    .json({ status: "success", message: "User logged in successfully", accessToken : token });
+  res.status(200).json({ status: "success", message: "User logged in successfully", accessToken: token });
 };
+
 
 const logoutUser = async (req: Request , res: Response, next: NextFunction) => {
   res.clearCookie("refreshToken");
