@@ -60,9 +60,14 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 
   const token = getAccessToken(user._id.toString(), process.env.JWT_SECRET as string);
   const refreshToken = getRefreshToken(user._id.toString(), process.env.JWT_SECRET as string);
+  const userDetail= {
+    _id:user._id,
+    username:user.username,
+    email:user.email
+  }
 
   res.cookie("refreshToken", refreshToken, { httpOnly: true });
-  res.status(200).json({ status: "success", message: "User logged in successfully", accessToken: token });
+  res.status(200).json({ status: "success", message: "User logged in successfully", accessToken: token ,user: userDetail });
 };
 
 
