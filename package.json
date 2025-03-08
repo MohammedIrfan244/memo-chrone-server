@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "start": "node dist/index.js",
-    "build": "tsc"
+    "build": "npm install && tsc"
   },
   "engines": {
     "node": ">=14.0.0"
