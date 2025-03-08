@@ -8,23 +8,21 @@ import { logInfo } from "./lib/utils/logger";
 
 const app = e();
 dotenv.config();
-mongoConfig()
+mongoConfig();
 
-app.use(e.json())
-app.use(cors(
-    {
-        origin: process.env.CLIENT_URL,
-        credentials: true
-    }
-));
+app.use(e.json());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
 
-app.use("/api/auth",authRouter)
+app.use("/api/auth", authRouter);
 
+app.use(globalErrorHandler);
 
-
-app.use(globalErrorHandler)
-
-const port : string = process.env.PORT || "3001";
+const port: string = process.env.PORT || "3001";
 
 app.listen(port, () => {
   logInfo(`server is running on port ${port}`);

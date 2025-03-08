@@ -10,13 +10,13 @@ const verifyToken = async (
   next: NextFunction
 ) => {
   try {
-    const authHeader = req.headers.authorization
+    const authHeader = req.headers.authorization;
     if (!authHeader) {
-        return next(new CustomError(401, "Unauthorized"));
+      return next(new CustomError(401, "Unauthorized"));
     }
     const token = authHeader.split(" ")[1];
-    if(!token){
-        return next (new CustomError(401,"Unauthorized"))
+    if (!token) {
+      return next(new CustomError(401, "Unauthorized"));
     }
 
     jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
@@ -24,14 +24,13 @@ const verifyToken = async (
         logError(err.message);
         return next(new CustomError(403, "Forbidden"));
       }
-      const {userId}= user as {userId : string}
-      req.user = userId
+      const { userId } = user as { userId: string };
+      req.user = userId;
       next();
     });
-
   } catch (error) {
     next(new CustomError(401, "Unauthorized"));
   }
 };
 
-export default verifyToken
+export default verifyToken;
