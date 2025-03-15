@@ -3,11 +3,13 @@ import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import morganMiddleware from "./config/morgan";
+import connectDB from "./config/dbConfig";
 
 //configurations
 
 const app = express();
 dotenv.config();
+connectDB();
 app.use(helmet());
 app.use(
   cors({
